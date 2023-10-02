@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
+  // Further reading:
+  // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
+  // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String @id @default(uuid()) @map("_id")
+  name     String
+  email    String @unique
+  password String
+}
+
+model Partner {
+  id         String      @id @default(uuid()) @map("_id")
+  name       String
+  surname    String
+  bornDate   DateTime?
+  sipcard    String
+  email      String
+  phone      String
+  notes      String
+  pendent    String
+  attentions Attention[]
+
+  //     sexo: { type: mongoose.Types.ObjectId, ref: 'resources' },
+  //   socioono: { type: mongoose.Types.ObjectId, ref: 'resources' },
+  //   nacionalidad: { type: mongoose.Types.ObjectId, ref: 'resources' },
+  //   ciudadresidencia: { type: mongoose.Types.ObjectId, ref: 'resources' },
+  //   howDidKnowUs: { type: mongoose.Types.ObjectId, ref: 'resources' },
+  //   yearDidKnowus: { type: mongoose.Types.ObjectId, ref: 'resources' }
+}
+
+model Attention {
+  id        String   @id @default(uuid()) @map("_id")
+  Partner   Partner? @relation(fields: [partnerId], references: [id])
+  partnerId String?
+
+  note String
+  date DateTime
+  pendentDate DateTime?
+  pendent String
+  archived Boolean @default(false)
+
+//   tipoaenciones: [{ type: mongoose.Types.ObjectId, ref: 'resources' }],
+//   Proyectos: [{ type: mongoose.Types.ObjectId, ref: 'resources' }],
+//   motivosatencion: [{ type: mongoose.Types.ObjectId, ref: 'resources' }],
+//   derivadoa: [{ type: mongoose.Types.ObjectId, ref: 'resources' }],
+//   derivadode: [{ type: mongoose.Types.ObjectId, ref: 'resources' }],
+//   formacion: [{ type: mongoose.Types.ObjectId, ref: 'resources' }],
+//   voluntariado: [{ type: mongoose.Types.ObjectId, ref: 'resources' }],
+//   diagnosticos: [{ type: mongoose.Types.ObjectId, ref: 'diagnosticos' }],
+//   lugaratencion: { type: mongoose.Types.ObjectId, ref: 'resources', default: null },
+//   tests: [{ type: mongoose.Types.ObjectId, ref: 'tests' }]
+}
