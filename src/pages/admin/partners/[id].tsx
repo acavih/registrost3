@@ -4,7 +4,7 @@ import dayjs from 'dayjs'
 import Link from 'next/link'
 import { useRouter } from "next/router"
 import { AuthedComponent } from "~/components/AuthedComponent"
-import { AddAttentionButton, Attention as AttentionComponent } from "~/components/attentions/Attentions"
+import { AddAttentionButton, Attention as AttentionComponent, Attentions } from "~/components/attentions/Attentions"
 import { PartnerForm } from "~/components/partners/PartnerForm"
 import ButtonActivator from "~/components/ui/ButtonActivator"
 import { ModalBox } from "~/components/ui/ModalBox"
@@ -14,7 +14,6 @@ export default AuthedComponent(function Partner() {
     const router = useRouter()
     const partner = api.partners.partnerShow.useQuery({ id: router.query.id as string })
     const removePartner = api.partners.removePartner.useMutation()
-    const attentions = api.attentions.userAttentions.useQuery({ id: router.query.id as string })
     return (
         <>
             <Breadcrumbs aria-label="breadcrumb">
@@ -66,18 +65,7 @@ export default AuthedComponent(function Partner() {
                     </TableRow>
                 </TableBody>
             </TableContainer>
-
-            <Box sx={{marginTop: '10px'}} display={'flex'} justifyContent={'space-between'}>
-                <Typography variant={'h5'}>Listado de atenciones ({(attentions.data ?? []).length})</Typography>
-                <AddAttentionButton onAddAttention={() => void attentions.refetch()} />
-            </Box>
-            <Grid container spacing={2}>
-                {attentions.data?.map((a) => (
-                    <Grid item key={a.id} xs={12}>
-                        <AttentionComponent a={a} onRefresh={() => void attentions.refetch()} />
-                    </Grid>
-                ))}
-            </Grid>
+            <Attentions />
         </>
     )
 })
