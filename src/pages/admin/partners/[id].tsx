@@ -1,11 +1,12 @@
 import { Box, Breadcrumbs, Button, Card, CardActions, CardContent, CardHeader, Divider, Grid, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from "@mui/material"
 import { DatePicker } from "@mui/x-date-pickers"
-import { type Attention } from "@prisma/client"
+import { Partner, type Attention } from "@prisma/client"
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import { useRouter } from "next/router"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { AuthedComponent } from "~/components/AuthedComponent"
+import { PartnerForm } from "~/components/partners/PartnerForm"
 import ButtonActivator from "~/components/ui/ButtonActivator"
 import { ModalBox } from "~/components/ui/ModalBox"
 import { api } from "~/utils/api"
@@ -28,19 +29,22 @@ export default AuthedComponent(function Partner() {
             <Divider sx={{ margin: '10px 0px' }} />
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography variant={'h4'}>{partner.data?.name} {partner.data?.surname}</Typography>
-                <ButtonActivator Activator={() => (<Button color="error" variant="contained">Eliminar socio</Button>)}>
-                    {(onClose) => (
-                        <ModalBox modalTitle="¿Estas seguro que quieres eliminar este socio?" onClose={onClose}>
-                            <Button variant={'contained'} color={'error'} onClick={async () => {
-                                await removePartner.mutateAsync({ id: router.query.id as string })
-                                onClose()
-                                router.push('/admin/partners')
-                            }}>
-                                Confirmar
-                            </Button>
-                        </ModalBox>
-                    )}
-                </ButtonActivator>
+                <Box display={'flex'} flexDirection={'row'}>
+                    {partner.data && <EditPartnerButton onUpdate={() => partner.refetch()} partner={partner.data} />}
+                    <ButtonActivator Activator={() => (<Button sx={{marginLeft: '20px'}} color="error" variant="contained">Eliminar socio</Button>)}>
+                        {(onClose) => (
+                            <ModalBox modalTitle="¿Estas seguro que quieres eliminar este socio?" onClose={onClose}>
+                                <Button variant={'contained'} color={'error'} onClick={async () => {
+                                    await removePartner.mutateAsync({ id: router.query.id as string })
+                                    onClose()
+                                    router.push('/admin/partners')
+                                }}>
+                                    Confirmar
+                                </Button>
+                            </ModalBox>
+                        )}
+                    </ButtonActivator>
+                </Box>
             </Box>
 
             <TableContainer>
@@ -78,6 +82,25 @@ export default AuthedComponent(function Partner() {
         </>
     )
 })
+
+function EditPartnerButton({partner, onUpdate}: {partner: Partner, onUpdate: () => void}) {
+    const updatePartner = api.partners.updatePartner.useMutation()
+    const router = useRouter()
+    return <ButtonActivator Activator={() => (<Button variant="contained">Editar socio</Button>)}>
+        {(onClose) => (
+            <ModalBox modalTitle="Editando un socio" onClose={onClose}>
+                <PartnerForm partner={partner} onSubmit={async (values: Partner) => {
+                    await updatePartner.mutateAsync({
+                        ...values as any,
+                        id: router.query.id as string
+                    })
+                    onUpdate()
+                    onClose()
+                }} />
+            </ModalBox>
+        )}
+    </ButtonActivator>
+}
 
 function Attention({a, onRefresh}: {a: Attention, onRefresh: () => void}) {
     const removeAttention = api.attentions.removeAttention.useMutation()

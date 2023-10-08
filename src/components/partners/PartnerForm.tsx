@@ -1,10 +1,35 @@
 import { Grid, Button, TextField } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { Partner } from "@prisma/client";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-export function PartnerForm({ onSubmit }: { onSubmit: (values: Partner) => void; }) {
+export function PartnerForm({ partner = null, onSubmit }: { partner: Partner | null | undefined, onSubmit: (values: Partner) => void; }) {
     const { handleSubmit, register, setValue, formState } = useForm<Partner>();
+    const [loaded, setLoaded] = useState(false)
+
+    useEffect(() => {
+        if (partner) {
+            console.log(partner.bornDate instanceof Date)
+            setValue('name', partner.name)
+            setValue('email', partner.email)
+            setValue('bornDate', partner.bornDate)
+            setValue('notes', partner.notes)
+            setValue('pendent', partner.pendent)
+            setValue('phone', partner.phone)
+            setValue('sipcard', partner.sipcard)
+            setValue('surname', partner.surname)
+        }
+        setTimeout(() => {
+            setLoaded(true)
+        }, 250);
+    }, [])
+
+    if (!loaded) {
+        return <div></div>
+    }
+
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={2}>
@@ -17,7 +42,7 @@ export function PartnerForm({ onSubmit }: { onSubmit: (values: Partner) => void;
                 <Grid item xs={12}>
                     <DatePicker value={formState.dirtyFields.bornDate} onChange={(value: any) => {
                         setValue('bornDate', value.toDate())
-                    }} label={'Fecha de nacimiento'} sx={{width: '100%'}} />
+                    }} defaultValue={partner?.bornDate ? dayjs(partner.bornDate) : null} format="DD/MM/YYYY" label={'Fecha de nacimiento'} sx={{width: '100%'}} />
                 </Grid>
                 <Grid item xs={12}>
                     <TextField {...register('sipcard')} fullWidth label={'Tarjeta sip'} />

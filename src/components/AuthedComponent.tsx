@@ -1,19 +1,17 @@
 /* import { signIn, signOut, useSession } from "next-auth/react";
 import { api } from "~/utils/api";*/
-import { Button, AppBar, IconButton, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { Button, AppBar, IconButton, Drawer, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { Container } from "@mui/material"
 import MenuIcon from '@mui/icons-material/Menu';
-import { signOut, useSession } from "next-auth/react";
-import { router } from "@trpc/server";
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 
-export const AuthedComponent = (PageComponent: any) => (props: any) => {
+export const AuthedComponent = (PageComponent: any) => function AuthedComponent(props) {
   const [drawer, setDrawer] = React.useState(false)
-  const session = useSession()
   return (
     <div>
       <AppDrawer drawer={drawer} setDrawer={setDrawer} />
@@ -38,7 +36,7 @@ function AppDrawer({drawer, setDrawer}) {
     <Drawer open={drawer} onClose={() => setDrawer(false)} variant={'persistent'}>
       <Toolbar />
       <List>
-        {pages.map(({text, href}, index) => (
+        {pages.map(({text, href}) => (
           <ListItem  sx={{minWidth: '250px'}} key={text} disablePadding>
             <ListItemButton href={href}>
               {/* <ListItemIcon>
@@ -73,7 +71,7 @@ function AuthedAppBar({drawer, setDrawer}) {
             Registros
           </Typography>
           <Button variant={'contained'} disableElevation onClick={async () => {
-            const result = await signOut({redirect: false})
+            await signOut({redirect: false})
             router.push('/')
           }} color="error">Logout</Button>
         </Toolbar>

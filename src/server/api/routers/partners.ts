@@ -2,6 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 const partnerValidator = z.object({
+    id: z.string().optional(),
     name: z.string().default(''),
     surname: z.string().default(''),
     email: z.string().default(''),
@@ -39,5 +40,14 @@ export const partnersRouter = createTRPCRouter({
     removePartner: protectedProcedure.input(z.object({id: z.string()})).mutation(async ({input, ctx: {db}}) => {
         await db.partner.delete({where: {id: input.id}})
         return {}
+    }),
+    updatePartner: protectedProcedure.input(partnerValidator).mutation(async ({input, ctx: {db}}) => {
+        const {id, ...dataUpdate} = input
+        const update = await db.partner.update({
+            where: {id},
+            data: dataUpdate
+        })
+
+        return update
     })
 })

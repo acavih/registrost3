@@ -7,7 +7,6 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-import { api } from "~/utils/api";
 import { signIn, useSession } from "next-auth/react";
 
 export default function Home() {
@@ -24,7 +23,6 @@ export default function Home() {
       <div>
         <LoginAppBar />
         <Toolbar />
-        <p>{session.status}</p>
         {session.status === 'unauthenticated' && <Container sx={{marginTop: '20px'}}>
           <LoginForm onLoginSuccess={() => {
             router.push('/admin/partners')
