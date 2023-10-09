@@ -39,6 +39,33 @@ model Partner {
   //   ciudadresidencia: { type: mongoose.Types.ObjectId, ref: 'resources' },
   //   howDidKnowUs: { type: mongoose.Types.ObjectId, ref: 'resources' },
   //   yearDidKnowus: { type: mongoose.Types.ObjectId, ref: 'resources' }
+  PartnerMetaValues PartnerMetaValues[]
+}
+
+model PartnerMetaTypes {
+  id                 String               @id @default(uuid()) @map("_id")
+  typemeta           String
+  label              String
+  PartnerMetaOptions PartnerMetaOptions[]
+  PartnerMetaValues  PartnerMetaValues[]
+}
+
+model PartnerMetaOptions {
+  id                 String              @id @default(uuid()) @map("_id")
+  typemeta           PartnerMetaTypes    @relation(fields: [partnerMetaTypesId], references: [id])
+  optionText         String
+  partnerMetaTypesId String
+  PartnerMetaValues  PartnerMetaValues[]
+}
+
+model PartnerMetaValues {
+  id                   String             @id @default(uuid()) @map("_id")
+  typemeta             PartnerMetaTypes   @relation(fields: [partnerMetaTypesId], references: [id])
+  optionText           PartnerMetaOptions @relation(fields: [partnerMetaOptionsId], references: [id])
+  partner              Partner            @relation(fields: [partnerId], references: [id])
+  partnerMetaTypesId   String
+  partnerMetaOptionsId String
+  partnerId            String
 }
 
 model Attention {
@@ -46,20 +73,47 @@ model Attention {
   Partner   Partner? @relation(fields: [partnerId], references: [id])
   partnerId String?
 
-  note String
-  date DateTime
+  note        String
+  date        DateTime
   pendentDate DateTime?
-  pendent String
-  archived Boolean @default(false)
+  pendent     String
+  archived    Boolean   @default(false)
 
-//   tipoaenciones: [{ type: mongoose.Types.ObjectId, ref: 'resources' }],
-//   Proyectos: [{ type: mongoose.Types.ObjectId, ref: 'resources' }],
-//   motivosatencion: [{ type: mongoose.Types.ObjectId, ref: 'resources' }],
-//   derivadoa: [{ type: mongoose.Types.ObjectId, ref: 'resources' }],
-//   derivadode: [{ type: mongoose.Types.ObjectId, ref: 'resources' }],
-//   formacion: [{ type: mongoose.Types.ObjectId, ref: 'resources' }],
-//   voluntariado: [{ type: mongoose.Types.ObjectId, ref: 'resources' }],
-//   diagnosticos: [{ type: mongoose.Types.ObjectId, ref: 'diagnosticos' }],
-//   lugaratencion: { type: mongoose.Types.ObjectId, ref: 'resources', default: null },
-//   tests: [{ type: mongoose.Types.ObjectId, ref: 'tests' }]
+  //   tipoaenciones: [{ type: mongoose.Types.ObjectId, ref: 'resources' }],
+  //   Proyectos: [{ type: mongoose.Types.ObjectId, ref: 'resources' }],
+  //   motivosatencion: [{ type: mongoose.Types.ObjectId, ref: 'resources' }],
+  //   derivadoa: [{ type: mongoose.Types.ObjectId, ref: 'resources' }],
+  //   derivadode: [{ type: mongoose.Types.ObjectId, ref: 'resources' }],
+  //   formacion: [{ type: mongoose.Types.ObjectId, ref: 'resources' }],
+  //   voluntariado: [{ type: mongoose.Types.ObjectId, ref: 'resources' }],
+  //   diagnosticos: [{ type: mongoose.Types.ObjectId, ref: 'diagnosticos' }],
+  //   lugaratencion: { type: mongoose.Types.ObjectId, ref: 'resources', default: null },
+  //   tests: [{ type: mongoose.Types.ObjectId, ref: 'tests' }]
+  AttentionMetaValues AttentionMetaValues[]
+}
+
+model AttentionMetaTypes {
+  id                   String                 @id @default(uuid()) @map("_id")
+  typemeta             String
+  label                String
+  AttentionMetaOptions AttentionMetaOptions[]
+  AttentionMetaValues  AttentionMetaValues[]
+}
+
+model AttentionMetaOptions {
+  id                   String                @id @default(uuid()) @map("_id")
+  typemeta             AttentionMetaTypes    @relation(fields: [attentionMetaTypesId], references: [id])
+  optionText           String
+  attentionMetaTypesId String
+  AttentionMetaValues  AttentionMetaValues[]
+}
+
+model AttentionMetaValues {
+  id                     String               @id @default(uuid()) @map("_id")
+  typemeta               AttentionMetaTypes   @relation(fields: [attentionMetaTypesId], references: [id])
+  optionText             AttentionMetaOptions @relation(fields: [attentionMetaOptionsId], references: [id])
+  attention              Attention            @relation(fields: [attentionId], references: [id])
+  attentionMetaTypesId   String
+  attentionMetaOptionsId String
+  attentionId            String
 }

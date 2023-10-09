@@ -30,7 +30,7 @@ function AppDrawer({drawer, setDrawer}) {
     {text: 'Socios', href: '/admin/partners'},
     {text: 'Últimas atenciones', href: '/admin/lastAttentions'},
     {text: 'Estadísticas', href: '/admin/stats'},
-    {text: 'Recursos', href: '/admin/partners'},
+    {text: 'Recursos', href: '/admin/resources'},
   ]
   return (
     <Drawer open={drawer} onClose={() => setDrawer(false)} variant={'persistent'}>
